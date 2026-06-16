@@ -58,7 +58,30 @@ public class CategoryService {
 
 
     //update category
+    public void atualizarCategoriaPorId(Long id, CategoryDTO dto){
+        Category cat = catRepo.findById(id).orElseThrow(() -> new RuntimeException());
+
+        if(dto.name() != null) {
+            cat.setName(dto.name());
+        }
+
+        if(dto.slug() != null) {
+            cat.setSlug(dto.slug());
+        }
+
+        if(dto.description() != null) {
+            cat.setDescription(dto.description());
+        }
+        if(dto.active() != null) {
+            cat.setActive(dto.active());
+        }
+
+        catRepo.save(cat);
+    }
 
     //delete category
+    public void deletarCategoriaPorId(Long id){
+        catRepo.deleteById(id);
+    }
 }
 

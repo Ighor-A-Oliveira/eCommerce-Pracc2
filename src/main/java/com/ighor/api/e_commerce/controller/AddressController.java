@@ -21,29 +21,37 @@ public class AddressController {
 
     }
 
-    //create user
+    //create address
     @PostMapping
-    public ResponseEntity<Void> criarUsuario(@Valid @RequestBody AddressDTO request){
+    public ResponseEntity<Void> criarEndereco(@Valid @RequestBody AddressDTO request){
         addrServ.criarEndereco(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
-    //list user by id
+    //search address by id
     @GetMapping("/id/{id}")
-    public ResponseEntity<AddressDTO> buscarUsuarioPorId(@Valid @PathVariable Long id){
+    public ResponseEntity<AddressDTO> buscarEnderecoPorId(@Valid @PathVariable Long id){
         return ResponseEntity.ok(addrServ.buscarEnderecoPorId(id));
     }
 
-    //list all users
+    //list all address
     @GetMapping
-    public ResponseEntity<List<AddressDTO>> buscarTodosUsuarios(){
+    public ResponseEntity<List<AddressDTO>> buscarTodosEnderecos(){
         return ResponseEntity.ok(addrServ.buscarTodosEnderecos());
     }
 
-    //login user
+    //update address
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> atualizarEnderecoPorId(@Valid @PathVariable Long userId, @Valid @RequestBody AddressDTO dto){
+        addrServ.atualizarEnderecoPorId(userId, dto);
+        return ResponseEntity.noContent().build();
+    }
 
-    //update user
-
-    //delete user
+    //delete address
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deletarEnderecoPorId(@Valid @PathVariable Long userId){
+        addrServ.deletarEnderecoPorId(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

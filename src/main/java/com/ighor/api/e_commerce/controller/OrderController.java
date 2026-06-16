@@ -1,5 +1,7 @@
 package com.ighor.api.e_commerce.controller;
 
+import com.ighor.api.e_commerce.dto.entity.OrderDTO;
+import com.ighor.api.e_commerce.dto.request.OrderRequestDTO;
 import com.ighor.api.e_commerce.dto.response.OrderResponseDTO;
 import com.ighor.api.e_commerce.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -28,21 +30,30 @@ public class OrderController {
         return ResponseEntity.ok("Pedido criado com sucesso");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> buscarPedido(
-            @PathVariable Long id) {
-
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponseDTO> buscarPedidoPorId(@PathVariable Long orderId) {
         return ResponseEntity.ok(
-                orderService.buscarPorId(id)
+                orderService.buscarPedidoPorId(orderId)
         );
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponseDTO>> listarPedidosUsuario(
-            @PathVariable Long userId) {
+    public ResponseEntity<List<OrderResponseDTO>> listarTodosPedidosDoUsuario(@PathVariable Long userId) {
 
         return ResponseEntity.ok(
                 orderService.listarPedidosUsuario(userId)
         );
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> cancelarPedido(@PathVariable Long orderId) {
+        orderService.cancelarPedidoPorId(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Void> atualizarPedido(@RequestBody OrderDTO order, @PathVariable Long orderId) {
+        orderService.atualizarPedido(order, orderId);
+        return ResponseEntity.noContent().build();
     }
 }

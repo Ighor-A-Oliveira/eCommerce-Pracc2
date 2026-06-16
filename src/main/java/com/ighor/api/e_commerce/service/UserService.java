@@ -6,6 +6,9 @@ import com.ighor.api.e_commerce.mapper.UserMapper;
 import com.ighor.api.e_commerce.model.entity.User;
 import com.ighor.api.e_commerce.model.enums.Role;
 import com.ighor.api.e_commerce.repo.UserRepo;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -70,6 +73,24 @@ public class UserService {
     //login user
 
     //Atualizar usuário
+    public void atualizarUsuarioPorId(Long userId, User update){
+        if (update == null){
+            return;
+        }
+
+        //Encontrando user
+        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        //Checando se ah dados a serem atualizados, se sim entáo fazemos as alteracoes
+        user.setName(update.getName() != null ? update.getName() : user.getName());
+        user.setEmail(update.getEmail() != null ? update.getEmail() : user.getEmail());
+        user.setPassword(update.getPassword() != null ? update.getPassword() : user.getPassword());
+        user.setPhone(update.getPhone() != null ? update.getPhone() : user.getPhone());
+
+        userRepo.save(user);
+    }
 
     //Deletar usuário
+    public void deletarUsuarioPorId(Long userId){
+        userRepo.deleteById(userId);
+    }
 }

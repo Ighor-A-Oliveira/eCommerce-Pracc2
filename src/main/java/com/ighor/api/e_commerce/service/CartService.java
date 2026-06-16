@@ -155,10 +155,6 @@ public class CartService {
             cart.getItems().add(novoItem);
         }
 
-        //System.out.println("Quantidade do request: " + request.quantity());
-        //System.out.println("ProductId do request: " + request.productId());
-        //cart.getItems().forEach(i -> System.out.println("Item no cart: id=" + i.getId() + " qty=" + i.getQuantity()));
-
         //Salvamos no carrinho mesmo pois temos o cascate ativado
         cartRepo.save(cart);
         CartRequestDTO dto = new CartRequestDTO(user.getId());
@@ -166,11 +162,58 @@ public class CartService {
     }
 
     //Atualizar quantidade de um item.
+    public void atualizarQuantidade(Long userId, Long productId, Long quantity) {
+
+        if (quantity == 0) {
+            return;
+        }
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException());
+
+        Cart cart = user.getCart();
+
+        CartItem cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
+
+        cartItem.setQuantity(cartItem.getQuantity() + quantity.intValue());
+
+        if (cartItem.getQuantity() <= 0) {
+            removerItem(userId, productId);
+            return;
+        }
+
+        cartRepo.save(cart);
+    }
 
 
     //Remover item do carrinho
+    public void removerItem(Long userId, Long productId){
+        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        Cart cart = user.getCart();
+
+        //Pegando o item especifico
+        CartItem cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
+        //Removendo o item especifico da lista
+            //cart.getItems = lista de items
+        cart.getItems().remove(cartItem);
+
+        cartRepo.save(cart);
+    }
 
     //Limpar carrinho
+    public void limparCarrinho(Long userId){
+        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        Cart cart = user.getCart();
+
+        cart.getItems().clear();
+        cartRepo.save(cart);
+    }
 
     //Calcular total
     public BigDecimal calcularTotal(List<CartItem> items){

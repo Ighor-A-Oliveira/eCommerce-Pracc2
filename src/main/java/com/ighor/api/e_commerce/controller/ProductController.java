@@ -2,6 +2,8 @@ package com.ighor.api.e_commerce.controller;
 
 import com.ighor.api.e_commerce.dto.request.ProductRequestDTO;
 import com.ighor.api.e_commerce.dto.response.ProductResponseDTO;
+import com.ighor.api.e_commerce.model.entity.Product;
+import com.ighor.api.e_commerce.model.entity.User;
 import com.ighor.api.e_commerce.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,7 @@ public class ProductController {
 
     }
 
-    //create user
+    //create product
     @PostMapping
     public ResponseEntity<Void> criarUsuario(@Valid @RequestBody ProductRequestDTO request){
         prodServ.criarProduto(request);
@@ -29,13 +31,13 @@ public class ProductController {
     }
 
 
-    //list user by id
+    //list product by id
     @GetMapping("/id/{id}")
     public ResponseEntity<ProductResponseDTO> buscarUsuarioPorId(@Valid @PathVariable Long id){
         return ResponseEntity.ok(prodServ.buscarProdutoPorId(id));
     }
 
-    //list all users
+    //list all products
     @GetMapping
     public ResponseEntity<List<ProductResponseDTO>> buscarTodosUsuarios(){
         return ResponseEntity.ok(prodServ.buscarTodosProdutos());
@@ -43,7 +45,17 @@ public class ProductController {
 
     //login user
 
-    //update user
+    //update product
+    @PutMapping("/{prodId}")
+    public ResponseEntity<Void> atualizarUsuario(@Valid @PathVariable Long prodId, @RequestBody Product prod){
+        prodServ.atualizarProdutoPorId(prodId,prod);
+        return ResponseEntity.noContent().build();
+    }
 
-    //delete user
+    //delete product
+    @DeleteMapping("/{prodId}")
+    public ResponseEntity<Void> deletaUusuario(@Valid @PathVariable Long prodId){
+        prodServ.deletarProdutoPorId(prodId);
+        return ResponseEntity.noContent().build();
+    }
 }

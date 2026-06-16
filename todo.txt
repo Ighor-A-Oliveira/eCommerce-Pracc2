@@ -91,7 +91,7 @@ category
 {
     "name": "Movies",
     "slug": "movies",
-    "description": "Porudcts related to movies, dvds, bluray discs, etc"
+    "description": "Products related to movies, dvds, bluray discs, etc"
 }
 
 

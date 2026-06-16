@@ -20,7 +20,7 @@ public class CategoryController {
 
     }
 
-    //create user
+    //create category
     @PostMapping
     public ResponseEntity<Void> criarUsuario(@Valid @RequestBody CategoryDTO request){
         catServ.criarCategoria(request);
@@ -28,21 +28,30 @@ public class CategoryController {
     }
 
 
-    //list user by id
+    //search category by id
     @GetMapping("/id/{id}")
     public ResponseEntity<CategoryDTO> buscarUsuarioPorId(@Valid @PathVariable Long id){
         return ResponseEntity.ok(catServ.buscarCategoriaPorId(id));
     }
 
-    //list all users
+    //list all categories
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> buscarTodosUsuarios(){
         return ResponseEntity.ok(catServ.buscarTodasCategorias());
     }
 
-    //login user
 
-    //update user
+    //update category
+    @PutMapping("/{catId}")
+    public ResponseEntity<Void> atualizarCategoriaPorId(@Valid @PathVariable Long catId, @Valid @RequestBody CategoryDTO dto){
+        catServ.atualizarCategoriaPorId(catId, dto);
+        return ResponseEntity.noContent().build();
+    }
 
-    //delete user
+    //delete category
+    @DeleteMapping("/{catId}")
+    public ResponseEntity<Void> deletarCategoriaPorId(@Valid @PathVariable Long catId){
+        catServ.deletarCategoriaPorId(catId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -35,7 +35,7 @@ public class OrderMapper {
         );
     }
 
-    public List<OrderResponseDTO> toDTO(List<Order> orders) {
+    public List<OrderResponseDTO> listToDTO(List<Order> orders) {
 
         return orders.stream()
                 .map(this::toDTO)

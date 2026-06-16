@@ -16,33 +16,22 @@ public class UserPaymentMethodController {
     }
 
     @PostMapping("/{userId}")
-    public UserPaymentMethod create(
-            @PathVariable Long userId,
-            @RequestBody UserPaymentMethod paymentMethod) {
-
-        return paymentMethodService.save(userId, paymentMethod);
+    public UserPaymentMethod salvar(@PathVariable Long userId, @RequestBody UserPaymentMethod paymentMethod) {
+        return paymentMethodService.salvarMetodoDePagamento(userId, paymentMethod);
     }
 
     @GetMapping("/{userId}")
-    public List<UserPaymentMethod> listByUser(
-            @PathVariable Long userId) {
-
-        return paymentMethodService.findByUserId(userId);
+    public List<UserPaymentMethod> listByUser(@PathVariable Long userId) {
+        return paymentMethodService.acharMetodoDePagamentoPeloUserId(userId);
     }
 
     @PutMapping("/{userId}/{paymentMethodId}/default")
-    public UserPaymentMethod setDefault(
-            @PathVariable Long userId,
-            @PathVariable Long paymentMethodId) {
-
-        return paymentMethodService.setAsDefault(paymentMethodId, userId);
+    public UserPaymentMethod setDefault(@PathVariable Long userId, @PathVariable Long paymentMethodId) {
+        return paymentMethodService.salvarComoPadrao(paymentMethodId, userId);
     }
 
     @DeleteMapping("/{userId}/{paymentMethodId}")
-    public void delete(
-            @PathVariable Long userId,
-            @PathVariable Long paymentMethodId) {
-
-        paymentMethodService.delete(paymentMethodId, userId);
+    public void delete(@PathVariable Long paymentMethodId, @PathVariable Long userId) {
+        paymentMethodService.deletarPorUserId(paymentMethodId, userId);
     }
 }

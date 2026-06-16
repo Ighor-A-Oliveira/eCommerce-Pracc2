@@ -2,6 +2,7 @@ package com.ighor.api.e_commerce.controller;
 
 import com.ighor.api.e_commerce.dto.entity.UserDTO;
 import com.ighor.api.e_commerce.dto.request.UserRegisterRequestDTO;
+import com.ighor.api.e_commerce.model.entity.User;
 import com.ighor.api.e_commerce.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,16 @@ public class UserController {
     //login user
 
     //update user
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> atualizarUsuario(@Valid @PathVariable Long userId, @RequestBody User user){
+        userServ.atualizarUsuarioPorId(userId,user);
+        return ResponseEntity.noContent().build();
+    }
 
     //delete user
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deletarUsuario(@Valid @PathVariable Long userId){
+        userServ.deletarUsuarioPorId(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

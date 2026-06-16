@@ -8,9 +8,9 @@ import com.ighor.api.e_commerce.model.entity.Product;
 import com.ighor.api.e_commerce.repo.CategoryRepo;
 import com.ighor.api.e_commerce.repo.ProductRepo;
 import jakarta.transaction.Transactional;
-import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ProductService {
         this.catRepo= catRepo;
     }
 
-    //create user
+    //create product
     @Transactional
     public void criarProduto(ProductRequestDTO request){
         Category category = catRepo.findById(request.categoryId())
@@ -49,24 +49,43 @@ public class ProductService {
     }
 
 
-    //list user by id
+    //list produto by id
     public ProductResponseDTO buscarProdutoPorId(Long id){
         //Procurando usuario
         Product prod = prodRepo.findById(id).orElseThrow(() -> new RuntimeException("Não foi possivel encontrar uma categoria com o id "+id));
         //Usando a classe UserMapper para converter a entidade em DTO
-        ProductResponseDTO dto = prodMapper.productParaDTO(prod);
-        return dto;
+        return prodMapper.productParaDTO(prod);
     }
 
-    //list all users
+    //list all products
     public List<ProductResponseDTO> buscarTodosProdutos(){
         //List<Category> cats = catRepo.findAll();
-        List<ProductResponseDTO> dtos = prodMapper.productsParaDTO(prodRepo.findAll());
-        return dtos;
+        return prodMapper.productsParaDTO(prodRepo.findAll());
     }
 
 
-    //update category
+    //update product
+    public void atualizarProdutoPorId(Long prodId, Product update){
+        if (update == null){
+            return;
+        }
 
-    //delete category
+        //Encontrando Product
+        Product prod = prodRepo.findById(prodId).orElseThrow(() -> new RuntimeException("Produto não encontrado com id: " + prodId));
+        //Checando se ah dados a serem atualizados, se sim entáo fazemos as alteracoes
+        prod.setName(update.getName() != null ? update.getName() : prod.getName());
+        prod.setDescription(update.getDescription() != null ? update.getDescription() : prod.getDescription());
+        if( update.getPrice() != null) prod.setPrice(update.getPrice().doubleValue() >= 0 ? update.getPrice() : prod.getPrice());
+        if( update.getStockQuantity() != null) prod.setStockQuantity(update.getStockQuantity() >= 0 ? update.getStockQuantity() : prod.getStockQuantity());
+        prod.setImageUrl(update.getImageUrl() != null ? update.getImageUrl() : prod.getImageUrl());
+        prod.setSku(update.getSku() != null ? update.getSku() : prod.getSku());
+        prod.setActive(update.getActive() != null ? update.getActive() : prod.getActive());
+
+        prodRepo.save(prod);
+    }
+
+    //delete product
+    public void deletarProdutoPorId(Long prodId){
+        prodRepo.deleteById(prodId);
+    }
 }
