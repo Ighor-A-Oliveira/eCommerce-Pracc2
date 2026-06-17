@@ -10,6 +10,7 @@ import com.ighor.api.e_commerce.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class CartController {
 
     //create cart
     @GetMapping("/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<CartResponseDTO> buscarCarrinho(@PathVariable Long userId){
         return ResponseEntity.ok(cartServ.buscarCarrinho(new CartRequestDTO(userId)));
     }
@@ -34,6 +36,7 @@ public class CartController {
 
     //add item to cart
     @PostMapping("/{userId}/items")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<CartResponseDTO> adicionarItem(@PathVariable Long userId, @RequestBody CartItemRequestDTO request){
         return ResponseEntity.ok(cartServ.adicionarItem(userId, request));
     }
@@ -41,6 +44,7 @@ public class CartController {
 
     //update cart
     @PutMapping("/{userId}/items/{productId}")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<CartResponseDTO> atualizarQuantidade(@PathVariable Long userId, @PathVariable Long productId, @RequestParam Long quantity){
         cartServ.atualizarQuantidade(userId, productId, quantity);
         return ResponseEntity.noContent().build();
@@ -48,12 +52,14 @@ public class CartController {
 
     //update cart
     @DeleteMapping("/{userId}/items/{productId}")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<CartResponseDTO> removerItem(@PathVariable Long userId, @PathVariable Long productId){
         cartServ.removerItem(userId, productId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id")
     public ResponseEntity<CartResponseDTO> limparCarrinho(@PathVariable Long userId){
         cartServ.limparCarrinho(userId);
         return ResponseEntity.noContent().build();

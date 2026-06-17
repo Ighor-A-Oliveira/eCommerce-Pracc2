@@ -162,6 +162,7 @@ public class CartService {
     }
 
     //Atualizar quantidade de um item.
+    @Transactional
     public void atualizarQuantidade(Long userId, Long productId, Long quantity) {
 
         if (quantity == 0) {
@@ -190,6 +191,7 @@ public class CartService {
 
 
     //Remover item do carrinho
+    @Transactional
     public void removerItem(Long userId, Long productId){
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
         Cart cart = user.getCart();
@@ -207,6 +209,7 @@ public class CartService {
     }
 
     //Limpar carrinho
+    @Transactional
     public void limparCarrinho(Long userId){
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
         Cart cart = user.getCart();

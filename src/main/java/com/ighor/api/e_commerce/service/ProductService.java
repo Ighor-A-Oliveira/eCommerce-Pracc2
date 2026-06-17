@@ -65,6 +65,7 @@ public class ProductService {
 
 
     //update product
+    @Transactional
     public void atualizarProdutoPorId(Long prodId, Product update){
         if (update == null){
             return;
@@ -85,6 +86,7 @@ public class ProductService {
     }
 
     //delete product
+    @Transactional
     public void deletarProdutoPorId(Long prodId){
         prodRepo.deleteById(prodId);
     }

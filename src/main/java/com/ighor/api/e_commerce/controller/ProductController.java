@@ -8,6 +8,7 @@ import com.ighor.api.e_commerce.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class ProductController {
 
     //create product
     @PostMapping
-    public ResponseEntity<Void> criarUsuario(@Valid @RequestBody ProductRequestDTO request){
+    //@PreAuthorize("hasRole('ADMIN')") //Comented just for testing
+    public ResponseEntity<Void> criarProduto(@Valid @RequestBody ProductRequestDTO request){
         prodServ.criarProduto(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -33,13 +35,13 @@ public class ProductController {
 
     //list product by id
     @GetMapping("/id/{id}")
-    public ResponseEntity<ProductResponseDTO> buscarUsuarioPorId(@Valid @PathVariable Long id){
+    public ResponseEntity<ProductResponseDTO> buscarProdutoPorId(@Valid @PathVariable Long id){
         return ResponseEntity.ok(prodServ.buscarProdutoPorId(id));
     }
 
     //list all products
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> buscarTodosUsuarios(){
+    public ResponseEntity<List<ProductResponseDTO>> buscarTodosProdutos(){
         return ResponseEntity.ok(prodServ.buscarTodosProdutos());
     }
 
@@ -47,14 +49,16 @@ public class ProductController {
 
     //update product
     @PutMapping("/{prodId}")
-    public ResponseEntity<Void> atualizarUsuario(@Valid @PathVariable Long prodId, @RequestBody Product prod){
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> atualizarProduto(@Valid @PathVariable Long prodId, @RequestBody Product prod){
         prodServ.atualizarProdutoPorId(prodId,prod);
         return ResponseEntity.noContent().build();
     }
 
     //delete product
     @DeleteMapping("/{prodId}")
-    public ResponseEntity<Void> deletaUusuario(@Valid @PathVariable Long prodId){
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deletarProduto(@Valid @PathVariable Long prodId){
         prodServ.deletarProdutoPorId(prodId);
         return ResponseEntity.noContent().build();
     }

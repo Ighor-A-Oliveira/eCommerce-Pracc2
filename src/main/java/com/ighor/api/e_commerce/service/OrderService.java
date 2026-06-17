@@ -141,6 +141,7 @@ public class OrderService {
 
 
     //Cancelar pedido
+    @Transactional
     public void cancelarPedidoPorId(Long orderId){
         //Buscando ordem especifica
         Order order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException());
@@ -160,12 +161,8 @@ public class OrderService {
     }
 
     //Atualizar status do pedido (admin)
+    @Transactional
     public void atualizarPedido(OrderDTO order, Long userId){
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
-        if (user.getRole() != Role.ADMIN){
-            throw new RuntimeException("Eh necessario ser admin para atualizar pedidos");
-        }
 
-        //still need to finish
     }
 }

@@ -22,13 +22,13 @@ public class UserPaymentMethodService {
         this.userRepo = userRepo;
     }
 
-    public List<UserPaymentMethod> acharMetodoDePagamentoPeloUserId(Long userId) {
+    public List<UserPaymentMethod> listarMetodoPagamentoPorUserId(Long userId) {
         //Retornar uma lista com todos os metodos de pagamento do usuario
         return paymentMethodRepo.findByUserId(userId);
     }
 
-
-    public UserPaymentMethod salvarMetodoDePagamento(Long userId, UserPaymentMethod paymentMethod) {
+    @Transactional
+    public UserPaymentMethod salvarMetodoPagamento(Long userId, UserPaymentMethod paymentMethod) {
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         //essa forma de pagamento eh vinculada a um usuario
@@ -41,16 +41,18 @@ public class UserPaymentMethodService {
             paymentMethod.setIsDefault(true);
         }
 
-        //sava a forma de pagamento
+        //salva a forma de pagamento
         return paymentMethodRepo.save(paymentMethod);
     }
 
-    public void deletarPorUserId(Long id, Long userId) {
+    @Transactional
+    public void deletarMetodoPagamentoPorId(Long id, Long userId) {
         UserPaymentMethod method = paymentMethodRepo.findByIdAndUserId(id, userId).orElseThrow(() -> new RuntimeException());
         paymentMethodRepo.delete(method);
     }
 
-    public UserPaymentMethod salvarComoPadrao(Long id, Long userId) {
+    @Transactional
+    public UserPaymentMethod definirComoPadrao(Long id, Long userId) {
         // Remove default de todos
         paymentMethodRepo.findByUserId(userId).forEach(pm -> pm.setIsDefault(false));
 

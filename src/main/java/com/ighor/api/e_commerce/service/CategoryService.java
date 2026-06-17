@@ -4,6 +4,7 @@ import com.ighor.api.e_commerce.dto.entity.CategoryDTO;
 import com.ighor.api.e_commerce.mapper.CategoryMapper;
 import com.ighor.api.e_commerce.model.entity.Category;
 import com.ighor.api.e_commerce.repo.CategoryRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CategoryService {
     }
 
     //create user
+    @Transactional
     public void criarCategoria(CategoryDTO request){
         //Checando se tem categoria com o nome informado
         if (catRepo.findByName(request.name().toUpperCase()).isPresent()){
@@ -58,6 +60,7 @@ public class CategoryService {
 
 
     //update category
+    @Transactional
     public void atualizarCategoriaPorId(Long id, CategoryDTO dto){
         Category cat = catRepo.findById(id).orElseThrow(() -> new RuntimeException());
 
@@ -80,6 +83,7 @@ public class CategoryService {
     }
 
     //delete category
+    @Transactional
     public void deletarCategoriaPorId(Long id){
         catRepo.deleteById(id);
     }
