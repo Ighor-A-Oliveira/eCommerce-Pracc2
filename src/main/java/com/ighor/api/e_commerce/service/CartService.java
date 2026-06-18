@@ -1,10 +1,12 @@
 package com.ighor.api.e_commerce.service;
 
-import com.ighor.api.e_commerce.dto.entity.CartDTO;
+//import com.ighor.api.e_commerce.dto.entity.CartDTO;
 import com.ighor.api.e_commerce.dto.request.CartItemRequestDTO;
 import com.ighor.api.e_commerce.dto.request.CartRequestDTO;
 import com.ighor.api.e_commerce.dto.response.CartItemResponseDTO;
 import com.ighor.api.e_commerce.dto.response.CartResponseDTO;
+import com.ighor.api.e_commerce.exception.InsufficientStockException;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.CartItemMapper;
 import com.ighor.api.e_commerce.model.entity.Cart;
 import com.ighor.api.e_commerce.model.entity.CartItem;
@@ -39,8 +41,8 @@ public class CartService {
     }
 
     @Transactional
-    public void criarCarrinho(CartDTO request){
-        User user = userRepo.findById(request.userId()).orElseThrow(() -> new RuntimeException("Usuario nao encontrado com esse id"));
+    public void criarCarrinho(CartRequestDTO request){
+        User user = userRepo.findById(request.userId()).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar usuario com o id "+request.userId()));
         Cart cart = new Cart();
         cart.setCreatedAt(LocalDateTime.now());
         cart.setTotalAmount(BigDecimal.ZERO);
@@ -61,9 +63,9 @@ public class CartService {
 
     //Buscar carrinho do usuário.
     @Transactional
-    public CartResponseDTO buscarCarrinho(CartRequestDTO request){
+    public CartResponseDTO buscarCarrinho(Long userId){
         //Procurar se ja tem carrinho criado
-        User user = userRepo.findById(request.userId()).orElseThrow(() -> new RuntimeException("Usuario nao encontrado com esse id"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar usuario com o id "+userId));
 
         //Se n tiver tem que criar e retornar o carrinho vazio
         if (user.getCart() == null) {
@@ -109,7 +111,7 @@ public class CartService {
     public CartResponseDTO adicionarItem(Long userId, CartItemRequestDTO request){
         //Checamos se o usuario existe
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Nao foi encontrado Usuario com o id "+userId));
 
         //Checamos se o cart existe
         Cart cart = user.getCart();
@@ -119,11 +121,11 @@ public class CartService {
         }
 
         //Tem que checar se o produto existe
-        Product prod = prodRepo.findById(request.productId()).orElseThrow(() -> new RuntimeException("Nao existe produto com o id "+request.productId()));
+        Product prod = prodRepo.findById(request.productId()).orElseThrow(() -> new ResourceNotFoundException("Nao existe produto com o id "+request.productId()));
 
         //Se o produto existe, checar se tem estoque
         if(prod.getStockQuantity() < request.quantity()){
-            throw new RuntimeException("Nao ah estoque suficiente de "+prod.getName());
+            throw new InsufficientStockException("Nao ah estoque suficiente de "+prod.getName());
         }
 
         //Checando se o item ja existe no carrinho
@@ -157,8 +159,8 @@ public class CartService {
 
         //Salvamos no carrinho mesmo pois temos o cascate ativado
         cartRepo.save(cart);
-        CartRequestDTO dto = new CartRequestDTO(user.getId());
-        return buscarCarrinho(dto);
+        //CartRequestDTO dto = new CartRequestDTO(user.getId());
+        return buscarCarrinho(user.getId());
     }
 
     //Atualizar quantidade de um item.
@@ -170,14 +172,14 @@ public class CartService {
         }
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new ResourceNotFoundException("Nao foi encontrado um Usuario com id "+userId));
 
         Cart cart = user.getCart();
 
         CartItem cartItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto com id "+productId+" não foi encontrado no carrinho"));
 
         cartItem.setQuantity(cartItem.getQuantity() + quantity.intValue());
 
@@ -193,14 +195,14 @@ public class CartService {
     //Remover item do carrinho
     @Transactional
     public void removerItem(Long userId, Long productId){
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar produto de id "+userId));
         Cart cart = user.getCart();
 
         //Pegando o item especifico
         CartItem cartItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto de Id "+productId+" não foi encontrado no carrinho"));
         //Removendo o item especifico da lista
             //cart.getItems = lista de items
         cart.getItems().remove(cartItem);
@@ -211,7 +213,7 @@ public class CartService {
     //Limpar carrinho
     @Transactional
     public void limparCarrinho(Long userId){
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar usuario com id "+userId));
         Cart cart = user.getCart();
 
         cart.getItems().clear();

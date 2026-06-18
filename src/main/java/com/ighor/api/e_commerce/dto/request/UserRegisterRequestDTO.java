@@ -1,15 +1,15 @@
 package com.ighor.api.e_commerce.dto.request;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 public record UserRegisterRequestDTO(
-        @NotEmpty(message = "Nome é obrigatorio!")
+        @NotBlank(message = "Nome é obrigatorio!")
         String name,
-        @NotEmpty(message = "Email é obrigatorio!")
+        @NotBlank(message = "Email é obrigatorio!")
         String email,
-        @NotEmpty(message = "Senha é obrigatoria!")
+        @NotBlank(message = "Senha é obrigatoria!")
         String password,
-        @NotEmpty(message = "Telefone é obrigatorio!")
+        @NotBlank(message = "Telefone é obrigatorio!")
         String phone
 ) {
 }

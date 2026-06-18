@@ -1,6 +1,6 @@
 package com.ighor.api.e_commerce.mapper;
 
-import com.ighor.api.e_commerce.dto.request.OrderItemResponseDTO;
+import com.ighor.api.e_commerce.dto.response.OrderItemResponseDTO;
 import com.ighor.api.e_commerce.dto.response.OrderResponseDTO;
 import com.ighor.api.e_commerce.model.entity.Order;
 import org.springframework.stereotype.Component;

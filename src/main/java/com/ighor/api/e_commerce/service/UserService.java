@@ -1,10 +1,12 @@
 package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.entity.UserDTO;
-import com.ighor.api.e_commerce.dto.request.LoginRequestDTO;
 import com.ighor.api.e_commerce.dto.request.UserLoginRequestDTO;
 import com.ighor.api.e_commerce.dto.request.UserRegisterRequestDTO;
+import com.ighor.api.e_commerce.dto.request.UserUpdateRequestDTO;
 import com.ighor.api.e_commerce.dto.response.UserLoginResponseDTO;
+import com.ighor.api.e_commerce.exception.DuplicateResourceException;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.UserMapper;
 import com.ighor.api.e_commerce.model.entity.User;
 import com.ighor.api.e_commerce.model.enums.Role;
@@ -14,7 +16,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class UserService {
         //Checando se tem usuario com o email informado
         if (userRepo.findByEmail(request.email()).isPresent()){
             //Se possui o flow de registro para
-            throw new RuntimeException("Ja existe Usuario cadastrado com o email "+ request.email());
+            throw new DuplicateResourceException("Ja existe Usuario cadastrado com o email "+ request.email());
         }
 
         //Se náo tiver usuario ja criado entao fazemos o registro
@@ -69,7 +70,7 @@ public class UserService {
     //Buscar usuário por ID
     public UserDTO buscarUsuarioPorId(Long id){
         //Procurando usuario
-        User user = userRepo.findById(id).orElseThrow(() -> new RuntimeException("Não foi possivel encontrar um usuario com id "+id));
+        User user = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi possivel encontrar um usuario com id "+id));
         //Usando a classe UserMapper para converter a entidade em DTO
         UserDTO dto = userMapper.userParaDTO(user);
         return dto;
@@ -110,18 +111,17 @@ public class UserService {
 
     //Atualizar usuário
     @Transactional
-    public void atualizarUsuarioPorId(Long userId, User update){
+    public void atualizarUsuarioPorId(Long userId, UserUpdateRequestDTO update){
         if (update == null){
             return;
         }
 
         //Encontrando user
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException());
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar um Usuario com o id "+userId));
         //Checando se ah dados a serem atualizados, se sim entáo fazemos as alteracoes
-        user.setName(update.getName() != null ? update.getName() : user.getName());
-        user.setEmail(update.getEmail() != null ? update.getEmail() : user.getEmail());
-        user.setPassword(update.getPassword() != null ? update.getPassword() : user.getPassword());
-        user.setPhone(update.getPhone() != null ? update.getPhone() : user.getPhone());
+        user.setName(update.name() != null ? update.name() : user.getName());
+        user.setEmail(update.email() != null ? update.email() : user.getEmail());
+        user.setPhone(update.phone() != null ? update.phone() : user.getPhone());
 
         userRepo.save(user);
     }

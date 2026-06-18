@@ -2,6 +2,7 @@ package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.entity.AddressDTO;
 import com.ighor.api.e_commerce.dto.entity.CategoryDTO;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.AddressMapper;
 import com.ighor.api.e_commerce.mapper.CategoryMapper;
 import com.ighor.api.e_commerce.model.entity.Address;
@@ -31,7 +32,7 @@ public class AddressService {
     //create address
     @Transactional
     public void criarEndereco(AddressDTO request){
-        User user = userRepo.findById(request.userId()).orElseThrow(() -> new RuntimeException("Nenhum usuario encontrado com esse id"));
+        User user = userRepo.findById(request.userId()).orElseThrow(() -> new ResourceNotFoundException(request.userId()));
         boolean defauldtAddr = false;
 
         //Se o user nao tiver address registrado o primeiro que ele inserir sera o padrao
@@ -59,7 +60,7 @@ public class AddressService {
     //list address by id
     public AddressDTO buscarEnderecoPorId(Long id){
         //Procurando address
-        Address addr = addrRepo.findById(id).orElseThrow(() -> new RuntimeException("Não foi possivel encontrar um endereco com o id "+id));
+        Address addr = addrRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
         //Usando a classe UserMapper para converter a entidade em DTO
         AddressDTO dto = addrMapper.addressParaDTO(addr);
         return dto;
@@ -76,7 +77,7 @@ public class AddressService {
     //update address
     @Transactional
     public void atualizarEnderecoPorId(Long id, AddressDTO dto){
-        Address addr = addrRepo.findById(id).orElseThrow(() -> new RuntimeException());
+        Address addr = addrRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 
         if (dto.street() != null) {
             addr.setStreet(dto.street());

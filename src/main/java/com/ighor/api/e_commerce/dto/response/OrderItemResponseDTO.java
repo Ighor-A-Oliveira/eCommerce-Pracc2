@@ -1,4 +1,4 @@
-package com.ighor.api.e_commerce.dto.request;
+package com.ighor.api.e_commerce.dto.response;
 
 import java.math.BigDecimal;
 

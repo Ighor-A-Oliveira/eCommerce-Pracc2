@@ -2,6 +2,8 @@ package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.request.ProductRequestDTO;
 import com.ighor.api.e_commerce.dto.response.ProductResponseDTO;
+import com.ighor.api.e_commerce.exception.BadRequestException;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.ProductMapper;
 import com.ighor.api.e_commerce.model.entity.Category;
 import com.ighor.api.e_commerce.model.entity.Product;
@@ -10,7 +12,6 @@ import com.ighor.api.e_commerce.repo.ProductRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class ProductService {
     @Transactional
     public void criarProduto(ProductRequestDTO request){
         Category category = catRepo.findById(request.categoryId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada com o ID: " + request.categoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com o ID: " + request.categoryId()));
 
         Product prod = new Product();
         prod.setName(request.name());
@@ -52,7 +53,7 @@ public class ProductService {
     //list produto by id
     public ProductResponseDTO buscarProdutoPorId(Long id){
         //Procurando usuario
-        Product prod = prodRepo.findById(id).orElseThrow(() -> new RuntimeException("Não foi possivel encontrar uma categoria com o id "+id));
+        Product prod = prodRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi possivel encontrar um produto com o id "+id));
         //Usando a classe UserMapper para converter a entidade em DTO
         return prodMapper.productParaDTO(prod);
     }
@@ -72,12 +73,18 @@ public class ProductService {
         }
 
         //Encontrando Product
-        Product prod = prodRepo.findById(prodId).orElseThrow(() -> new RuntimeException("Produto não encontrado com id: " + prodId));
+        Product prod = prodRepo.findById(prodId).orElseThrow(() -> new ResourceNotFoundException("Nao foi encontrado um produto com id: " + prodId));
         //Checando se ah dados a serem atualizados, se sim entáo fazemos as alteracoes
         prod.setName(update.getName() != null ? update.getName() : prod.getName());
         prod.setDescription(update.getDescription() != null ? update.getDescription() : prod.getDescription());
-        if( update.getPrice() != null) prod.setPrice(update.getPrice().doubleValue() >= 0 ? update.getPrice() : prod.getPrice());
-        if( update.getStockQuantity() != null) prod.setStockQuantity(update.getStockQuantity() >= 0 ? update.getStockQuantity() : prod.getStockQuantity());
+        if( update.getPrice() != null) {
+            prod.setPrice(update.getPrice().doubleValue() >= 0 ? update.getPrice() : prod.getPrice());
+            throw new BadRequestException("Preco do produto precisa ser valor positivo");
+        }
+        if( update.getStockQuantity() != null){
+            prod.setStockQuantity(update.getStockQuantity() >= 0 ? update.getStockQuantity() : prod.getStockQuantity());
+            throw new BadRequestException("Quantidade no estoque precisa ser um valor igual ou maior que zero");
+        }
         prod.setImageUrl(update.getImageUrl() != null ? update.getImageUrl() : prod.getImageUrl());
         prod.setSku(update.getSku() != null ? update.getSku() : prod.getSku());
         prod.setActive(update.getActive() != null ? update.getActive() : prod.getActive());

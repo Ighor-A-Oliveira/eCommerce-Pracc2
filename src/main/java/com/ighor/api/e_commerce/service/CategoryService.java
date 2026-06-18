@@ -1,6 +1,8 @@
 package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.entity.CategoryDTO;
+import com.ighor.api.e_commerce.exception.DuplicateResourceException;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.CategoryMapper;
 import com.ighor.api.e_commerce.model.entity.Category;
 import com.ighor.api.e_commerce.repo.CategoryRepo;
@@ -26,7 +28,7 @@ public class CategoryService {
         //Checando se tem categoria com o nome informado
         if (catRepo.findByName(request.name().toUpperCase()).isPresent()){
             //Se possui o flow de registro para
-            throw new RuntimeException("Ja existe uma Categoria cadastrada com o nome "+ request.name());
+            throw new DuplicateResourceException("Ja existe uma Categoria cadastrada com o nome "+ request.name());
         }
 
         //Se nao tiver categoria ja criado entao fazemos o registro
@@ -45,7 +47,7 @@ public class CategoryService {
     //list user by id
     public CategoryDTO buscarCategoriaPorId(Long id){
         //Procurando usuario
-        Category cat = catRepo.findById(id).orElseThrow(() -> new RuntimeException("Não foi possivel encontrar uma categoria com o id "+id));
+        Category cat = catRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nao foi encontrada categoria com o id "+id));
         //Usando a classe UserMapper para converter a entidade em DTO
         CategoryDTO dto = catMapper.categoryParaDTO(cat);
         return dto;
@@ -62,7 +64,7 @@ public class CategoryService {
     //update category
     @Transactional
     public void atualizarCategoriaPorId(Long id, CategoryDTO dto){
-        Category cat = catRepo.findById(id).orElseThrow(() -> new RuntimeException());
+        Category cat = catRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nao foi encontrada categoria com o id "+id));
 
         if(dto.name() != null) {
             cat.setName(dto.name());

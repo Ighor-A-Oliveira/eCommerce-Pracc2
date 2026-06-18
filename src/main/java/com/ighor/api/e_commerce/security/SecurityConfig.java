@@ -41,13 +41,19 @@ public class SecurityConfig {
                         //Libera erros internos do Spring
                         //Isso evita que páginas de erro 403/404 criem loops de autenticação.
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        //Rotas do swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         //User pode acessar esses endpoints sem estar autenticado
-                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/product").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/product/id").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/product/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/category").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/category/id").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/category/*").permitAll()
                         //Exige autenticação em qualquer outra rota
                         .anyRequest().authenticated())
                 //Adiciona o meu filtro JWT

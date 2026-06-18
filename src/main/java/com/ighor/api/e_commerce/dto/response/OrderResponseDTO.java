@@ -1,6 +1,5 @@
 package com.ighor.api.e_commerce.dto.response;
 
-import com.ighor.api.e_commerce.dto.request.OrderItemResponseDTO;
 import com.ighor.api.e_commerce.model.enums.OrderStatus;
 
 import java.math.BigDecimal;

@@ -1,12 +1,14 @@
 package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.entity.OrderDTO;
+import com.ighor.api.e_commerce.dto.request.OrderRequestDTO;
 import com.ighor.api.e_commerce.dto.response.OrderResponseDTO;
+import com.ighor.api.e_commerce.exception.CartEmptyException;
+import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.OrderMapper;
 import com.ighor.api.e_commerce.model.entity.*;
 import com.ighor.api.e_commerce.model.enums.OrderStatus;
 import com.ighor.api.e_commerce.model.enums.PaymentStatus;
-import com.ighor.api.e_commerce.model.enums.Role;
 import com.ighor.api.e_commerce.repo.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -48,30 +50,30 @@ public class OrderService {
 
     //Criar pedido a partir do carrinho
     @Transactional
-    public void criarPedido(Long userId, Long addressId, Long paymentMethodId) {
+    public void criarPedido(OrderRequestDTO dto) {
 
         //Buscando user que fez o pedido
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        User user = userRepo.findById(dto.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         //Buscando endereco do user
-        Address addr = addrRepo.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+        Address addr = addrRepo.findById(dto.addressId())
+                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
 
         //Buscando metodo de pagamento do user
-        UserPaymentMethod paymentMethod = paymentMethodRepo.findById(paymentMethodId)
-                .orElseThrow(() -> new RuntimeException("Método de pagamento não encontrado"));
+        UserPaymentMethod paymentMethod = paymentMethodRepo.findById(dto.addressId())
+                .orElseThrow(() -> new ResourceNotFoundException("Método de pagamento não encontrado"));
 
         //Pegando acesso ao cart
         Cart cart = user.getCart();
 
         //Checagens
         if (cart == null) {
-            throw new RuntimeException("Usuário não possui carrinho");
+            throw new ResourceNotFoundException("Usuário não possui carrinho");
         }
 
         if (cart.getItems().isEmpty()) {
-            throw new RuntimeException("Carrinho vazio");
+            throw new CartEmptyException();
         }
 
         //Criando order com os dados coletados
@@ -125,7 +127,7 @@ public class OrderService {
     public OrderResponseDTO buscarPedidoPorId(Long orderId) {
 
         return orderMapper.toDTO(orderRepo.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado")));
+                .orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar uma ordem com id "+orderId)));
     }
 
     //Listar pedidos de um usuário
@@ -144,7 +146,7 @@ public class OrderService {
     @Transactional
     public void cancelarPedidoPorId(Long orderId){
         //Buscando ordem especifica
-        Order order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException());
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar uma ordem com id "+orderId));
         //Alterando o status
         order.setStatus(OrderStatus.CANCELLED);
 
