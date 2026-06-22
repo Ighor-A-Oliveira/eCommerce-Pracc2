@@ -51,7 +51,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Should create user successfully")
-    void criarUsuarioCase1(){
+    void criarUsuarioCase(){
 
         UserRegisterRequestDTO dto =
                 new UserRegisterRequestDTO(
@@ -74,7 +74,7 @@ class UserServiceTest {
 
 
     @Test
-    void shouldSaveCorrectUser(){
+    void SalvarUsuario(){
 
         UserRegisterRequestDTO dto =
                 new UserRegisterRequestDTO(
@@ -110,7 +110,7 @@ class UserServiceTest {
 
 
     @Test
-    void buscarUsuarioPorIdCase1(){
+    void buscarUsuarioPorId(){
 
         User user = new User();
 
@@ -143,7 +143,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldLoginSuccessfully(){
+    void logarUsuario(){
 
         User user = new User();
 
@@ -178,7 +178,7 @@ class UserServiceTest {
 
 
     @Test
-    void shouldThrowExceptionWhenCredentialsAreInvalid(){
+    void erroNasInfosDeLogin(){
 
         UserLoginRequestDTO request =
                 new UserLoginRequestDTO(

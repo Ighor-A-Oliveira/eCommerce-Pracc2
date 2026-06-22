@@ -161,7 +161,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("Deve criar uma de pedidos pelo usuario")
+    @DisplayName("Deve criar uma lista de pedidos feitos pelo usuario")
     void listarPedidosUsuario() {
         //configurando para retornar a order
         when(orderRepo.findByUserId(1L)).thenReturn(List.of(order));

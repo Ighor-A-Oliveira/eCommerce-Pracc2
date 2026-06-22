@@ -195,7 +195,7 @@ public class CartService {
     //Remover item do carrinho
     @Transactional
     public void removerItem(Long userId, Long productId){
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar produto de id "+userId));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Nao foi possivel encontrar usuario de id "+userId));
         Cart cart = user.getCart();
 
         //Pegando o item especifico

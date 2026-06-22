@@ -1,15 +1,12 @@
 package com.ighor.api.e_commerce.service;
 
 import com.ighor.api.e_commerce.dto.entity.AddressDTO;
-import com.ighor.api.e_commerce.dto.entity.CategoryDTO;
 import com.ighor.api.e_commerce.exception.ResourceNotFoundException;
 import com.ighor.api.e_commerce.mapper.AddressMapper;
-import com.ighor.api.e_commerce.mapper.CategoryMapper;
 import com.ighor.api.e_commerce.model.entity.Address;
 import com.ighor.api.e_commerce.model.entity.Category;
 import com.ighor.api.e_commerce.model.entity.User;
 import com.ighor.api.e_commerce.repo.AddressRepo;
-import com.ighor.api.e_commerce.repo.CategoryRepo;
 import com.ighor.api.e_commerce.repo.UserRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -68,8 +65,11 @@ public class AddressService {
 
     //list all addresses
     public List<AddressDTO> buscarTodosEnderecos(){
-        //List<Category> cats = catRepo.findAll();
-        List<AddressDTO> dtos = addrMapper.addressesParaDTO(addrRepo.findAll());
+        List<Address> addrs = addrRepo.findAll();
+        List<AddressDTO> dtos = addrMapper.addressesParaDTO(addrs);
+        if (addrs.isEmpty() || dtos.isEmpty() ){
+            throw new ResourceNotFoundException("Nao ah enderecos registrados");
+        }
         return dtos;
     }
 
@@ -117,6 +117,9 @@ public class AddressService {
     //delete address
     @Transactional
     public void deletarEnderecoPorId(Long id){
+        if (!addrRepo.existsById(id)) {
+            throw new ResourceNotFoundException(id);
+        }
         addrRepo.deleteById(id);
     }
 }
