@@ -158,10 +158,4 @@ public class OrderService {
         payRepo.save(payment);
         orderRepo.save(order);
     }
-
-    //Atualizar status do pedido (admin)
-    @Transactional
-    public void atualizarPedido(OrderDTO order, Long userId){
-
-    }
 }

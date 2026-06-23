@@ -81,17 +81,4 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Atualiza um registro de order pelo orderId")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Registro de order atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Registro de order não foi encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-    })
-    @PutMapping("/{orderId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> atualizarPedido(@Valid @RequestBody OrderDTO order, @Valid @PathVariable Long orderId) {
-        orderService.atualizarPedido(order, orderId);
-        return ResponseEntity.noContent().build();
-    }
 }
