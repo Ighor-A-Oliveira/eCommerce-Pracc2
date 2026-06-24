@@ -148,13 +148,10 @@ CUSTOMER
 
 ## 🧪 Testes
 
-O projeto possui testes unitários de Services com:
+O projeto possui testes unitários com:
 
 - JUnit 5
 - Mockito
-- @ExtendWith(MockitoExtension.class)
-
-Cobertura dos principais serviços: UserService, CartService, OrderService, AddressService, CategoryService e UserPaymentMethodService.
 
 ---
 
